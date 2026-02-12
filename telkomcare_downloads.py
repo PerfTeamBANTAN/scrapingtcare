@@ -30,7 +30,10 @@ print("TC_SESSION_NAME =", os.environ.get("TC_SESSION_NAME"))
 print("TC_BASE_DOMAIN  =", os.environ.get("TC_BASE_DOMAIN"))
 print("TC_SESSION_VALUE=", os.environ.get("TC_SESSION_VALUE"))
 
-DOWNLOADS_FOLDER = str(Path.home() / "Downloads")
+# Pastikan folder Downloads ada
+DOWNLOADS_FOLDER_PATH = Path.home() / "Downloads"
+DOWNLOADS_FOLDER_PATH.mkdir(parents=True, exist_ok=True)
+DOWNLOADS_FOLDER = str(DOWNLOADS_FOLDER_PATH)
 
 SESSION_COOKIE_NAME = os.getenv("TC_SESSION_NAME", "newtelkomcareapache")
 SESSION_COOKIE_VALUE = os.getenv("TC_SESSION_VALUE", "")
@@ -100,7 +103,7 @@ def wait_for_new_download(before_files, timeout=180):
     raise TimeoutError("Timeout menunggu file download TelkomCare")
 
 
-def wait_download_complete(path: Path = Path.home() / "Downloads", timeout: int = 300):
+def wait_download_complete(path: Path = DOWNLOADS_FOLDER_PATH, timeout: int = 300):
     print("⏳ Menunggu proses download selesai (cek *.crdownload)...")
     start = time.time()
     while time.time() - start < timeout:
@@ -274,7 +277,7 @@ def download_report_hsi(driver):
     driver.get(dl_href)
 
     downloaded_file = wait_for_new_download(before_files)
-    wait_download_complete(Path(DOWNLOADS_FOLDER))
+    wait_download_complete(DOWNLOADS_FOLDER_PATH)
     print("✅ Download HSI24 selesai!")
     return downloaded_file
 
@@ -322,7 +325,7 @@ def download_wecare_gaul(driver):
     driver.get(download_url)
 
     downloaded_file = wait_for_new_download(before_files)
-    wait_download_complete(Path(DOWNLOADS_FOLDER))
+    wait_download_complete(DOWNLOADS_FOLDER_PATH)
     print(f"✅ Download WECARE GAUL selesai: {downloaded_file}")
     return downloaded_file
 
@@ -434,7 +437,7 @@ def download_report_datin(driver):
     driver.get(download_url)
 
     wait_for_new_download(before_files)
-    wait_download_complete(Path(DOWNLOADS_FOLDER))
+    wait_download_complete(DOWNLOADS_FOLDER_PATH)
     print("✅ Download DATIN24 selesai!")
 
 
@@ -491,7 +494,7 @@ def download_ttr_datin(driver):
     driver.get(download_url)
 
     downloaded_file = wait_for_new_download(before_files)
-    wait_download_complete(Path(DOWNLOADS_FOLDER))
+    wait_download_complete(DOWNLOADS_FOLDER_PATH)
     print("✅ Download TTR DATIN selesai!")
     return downloaded_file
 
@@ -528,7 +531,7 @@ def download_ttr_indibiz(driver):
     driver.get(download_url)
 
     downloaded_file = wait_for_new_download(before_files)
-    wait_download_complete(Path(DOWNLOADS_FOLDER))
+    wait_download_complete(DOWNLOADS_FOLDER_PATH)
     print("✅ Download TTR INDIBIZ selesai!")
     return downloaded_file
 
@@ -565,6 +568,6 @@ def download_ttr_reseller(driver):
     driver.get(download_url)
 
     downloaded_file = wait_for_new_download(before_files)
-    wait_download_complete(Path(DOWNLOADS_FOLDER))
+    wait_download_complete(DOWNLOADS_FOLDER_PATH)
     print("✅ Download TTR RESELLER selesai!")
     return downloaded_file
