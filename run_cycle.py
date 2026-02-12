@@ -1,10 +1,12 @@
 # run_cycle.py
-import time
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from shutil import which
 
 from telkomcare_login import login_otomatis
 from telkomcare_downloads import (
@@ -37,7 +39,8 @@ def create_driver():
     chrome_options.add_argument("--headless=new")  # penting di CI
     chrome_options.add_argument("--window-size=1280,800")
 
-    driver = webdriver.Chrome(options=chrome_options)
+    service = Service(which("chromedriver"))  # pakai chromedriver dari PATH
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     return driver
 
 
@@ -51,19 +54,7 @@ def need_fresh_login():
     return True
 
 
-def run_import(cmd, label):
-    print(f"\n=== RUN: {cmd} ({label}) ===")
-    result = subprocess.run(cmd, shell=True)
-    if result.returncode != 0:
-        print(f"❌ Gagal menjalankan {cmd}")
-        return False
-    return True
-
-
 def main():
-    from subprocess import run as _run  # hindari import global di atas
-    import subprocess
-
     driver = None
     first_cycle = True
     try:
@@ -85,27 +76,27 @@ def main():
 
         # 2. HSI24 → WECARE HSI
         download_report_hsi(driver)
-        _ = subprocess.run("py import_telkomcare_download.py", shell=True)
+        subprocess.run("python import_telkomcare_download.py", shell=True, check=False)
 
         # 2b. HSI24 GAUL → WECARE GAUL
         download_wecare_gaul(driver)
-        _ = subprocess.run("py import_telkomcare_wecare_gaul.py", shell=True)
+        subprocess.run("python import_telkomcare_wecare_gaul.py", shell=True, check=False)
 
         # 3. DATIN24 → WECARE DATIN
         download_report_datin(driver)
-        _ = subprocess.run("py import_telkomcare_wecare_datin.py", shell=True)
+        subprocess.run("python import_telkomcare_wecare_datin.py", shell=True, check=False)
 
         # 4. TTR DATIN
         download_ttr_datin(driver)
-        _ = subprocess.run("py import_telkomcare_ttr_datin.py", shell=True)
+        subprocess.run("python import_telkomcare_ttr_datin.py", shell=True, check=False)
 
         # 5. TTR INDIBIZ
         download_ttr_indibiz(driver)
-        _ = subprocess.run("py import_telkomcare_ttr_indibiz.py", shell=True)
+        subprocess.run("python import_telkomcare_ttr_indibiz.py", shell=True, check=False)
 
         # 6. TTR RESELLER
         download_ttr_reseller(driver)
-        _ = subprocess.run("py import_telkomcare_ttr_reseller.py", shell=True)
+        subprocess.run("python import_telkomcare_ttr_reseller.py", shell=True, check=False)
 
     finally:
         print("🧹 Menutup browser Selenium...")
