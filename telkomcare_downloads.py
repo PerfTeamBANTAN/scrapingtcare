@@ -42,11 +42,13 @@ print("TC_BASE_DOMAIN  =", BASE_DOMAIN)
 print("TC_SESSION_VALUE length =", len(SESSION_COOKIE_VALUE))
 
 
-# ===================== COOKIE SESSION TELKOMCARE =====================
+# ===================== COOKIE SESSION TELKOMCARE (OPSIONAL / DEBUG) =====================
 
 def inject_session_cookie(driver):
     """
     Set cookie session TelkomCare berdasarkan cookies.env.
+    (Saat ini flow utama sudah pakai telkomcare_session.ensure_logged_in,
+    fungsi ini bisa dipakai untuk debug/manual.)
     """
     print("🔐 Inject session cookie TelkomCare...")
     print(f"   COOKIE NAME   = {SESSION_COOKIE_NAME}")
@@ -72,25 +74,6 @@ def inject_session_cookie(driver):
     )
 
     print("   -> COOKIE DI DRIVER:", driver.get_cookie(SESSION_COOKIE_NAME))
-
-
-def ensure_logged_in(driver, first_cycle: bool):
-    """
-    Login via cookie. Dipanggil dari run_all.py setiap cycle.
-    """
-    inject_session_cookie(driver)
-
-    test_url = "https://telkomcare.telkom.co.id/assurance/dashboard/alertresponse"
-    print(f"🔗 Test akses URL: {test_url}")
-    driver.get(test_url)
-
-    time.sleep(3)
-    current = driver.current_url
-    print(f"🔍 current_url: {current}")
-    if "login" in current.lower():
-        raise Exception("Cookie session tidak valid, masih di halaman login.")
-    else:
-        print("✅ Session TelkomCare valid (sudah login).")
 
 
 # ===================== HELPER DOWNLOAD =====================
@@ -295,6 +278,7 @@ def download_report_hsi(driver):
     print("✅ Download HSI24 selesai!")
     return downloaded_file
 
+
 # ===================== WECARE GAUL (FOLLOW HSI PAGE) =====================
 
 def download_wecare_gaul(driver):
@@ -342,7 +326,8 @@ def download_wecare_gaul(driver):
     print(f"✅ Download WECARE GAUL selesai: {downloaded_file}")
     return downloaded_file
 
-# ===================== DOWNLOAD DATIN (Direct URL, sudah OK) =====================
+
+# ===================== DOWNLOAD DATIN (Step-by-step) =====================
 
 def download_report_datin(driver):
     """
@@ -401,7 +386,7 @@ def download_report_datin(driver):
         raise
 
     print("4️⃣ Tunggu tabel muncul & ambil link data href...")
-    time.sleep(8)  # boleh Anda ganti dengan WebDriverWait table tbody tr
+    time.sleep(8)  # boleh diganti WebDriverWait table tbody tr
     try:
         data_link = WebDriverWait(driver, 60).until(
             EC.presence_of_element_located(
@@ -451,6 +436,7 @@ def download_report_datin(driver):
     wait_for_new_download(before_files)
     wait_download_complete(Path(DOWNLOADS_FOLDER))
     print("✅ Download DATIN24 selesai!")
+
 
 # ===================== DOWNLOAD TTR (DETAILRESCOMP25) =====================
 
