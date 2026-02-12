@@ -19,8 +19,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+
+from shutil import which
 
 from telkomcare_session import save_session_cookie_from_driver  # <=== penting
 
@@ -32,9 +33,14 @@ logging.basicConfig(
     handlers=[logging.FileHandler("telkomcare_login.log"), logging.StreamHandler()],
 )
 
-USERNAME = os.getenv("TELKOM_USERNAME", "19950145")
-PASSWORD = os.getenv("TELKOM_PASSWORD", "Sla2020")
-TOTP_SECRET = os.getenv("TELKOM_TOTP_SECRET", "2VGL6TXQ2IJ42YPU")
+USERNAME = os.getenv("TELKOM_USERNAME")
+PASSWORD = os.getenv("TELKOM_PASSWORD")
+TOTP_SECRET = os.getenv("TELKOM_TOTP_SECRET")
+
+if not USERNAME or not PASSWORD or not TOTP_SECRET:
+    raise RuntimeError(
+        "Env TELKOM_USERNAME / TELKOM_PASSWORD / TELKOM_TOTP_SECRET belum di-set"
+    )
 
 # EasyOCR untuk bahasa Indonesia
 reader = easyocr.Reader(["id"], gpu=False)
@@ -56,9 +62,9 @@ def setup_driver():
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-extensions")
     options.add_argument("--window-size=1280,800")
-    # options.add_argument("--headless")  # aktifkan jika mau headless
+    options.add_argument("--headless=new")  # penting untuk GitHub Actions
 
-    service = Service(ChromeDriverManager().install())
+    service = Service(which("chromedriver"))
     return webdriver.Chrome(service=service, options=options)
 
 
