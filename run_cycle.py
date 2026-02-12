@@ -2,11 +2,11 @@
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from shutil import which
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
- from selenium.webdriver.chrome.service import Service
-from shutil import which
+from selenium.webdriver.chrome.service import Service
 
 from telkomcare_login import login_otomatis
 from telkomcare_downloads import (
