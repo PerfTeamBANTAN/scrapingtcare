@@ -1,0 +1,38 @@
+name: Telkomcare Automation
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # jalan tiap 15 menit (UTC)
+  workflow_dispatch:          # bisa dijalankan manual dari tab Actions
+
+jobs:
+  run-telkomcare:
+    runs-on: ubuntu-latest
+
+    env:
+      TELKOM_USERNAME: ${{ secrets.TELKOM_USERNAME }}
+      TELKOM_PASSWORD: ${{ secrets.TELKOM_PASSWORD }}
+      TELKOM_TOTP_SECRET: ${{ secrets.TELKOM_TOTP_SECRET }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Telkomcare cycle
+        run: |
+          python run_cycle.py
