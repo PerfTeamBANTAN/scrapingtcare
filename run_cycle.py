@@ -5,7 +5,7 @@ from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+ from selenium.webdriver.chrome.service import Service
 from shutil import which
 
 from telkomcare_login import login_otomatis
@@ -21,13 +21,17 @@ from telkomcare_session import ensure_logged_in
 
 BASE_DIR = Path(__file__).resolve().parent
 COOKIES_ENV_PATH = BASE_DIR / "cookies.env"
-DOWNLOADS_FOLDER = str(Path.home() / "Downloads")
+
+# Pastikan folder Downloads ada
+DOWNLOADS_FOLDER = Path.home() / "Downloads"
+DOWNLOADS_FOLDER.mkdir(parents=True, exist_ok=True)
+DOWNLOADS_FOLDER_STR = str(DOWNLOADS_FOLDER)
 
 
 def create_driver():
     chrome_options = Options()
     prefs = {
-        "download.default_directory": DOWNLOADS_FOLDER,
+        "download.default_directory": DOWNLOADS_FOLDER_STR,
         "download.prompt_for_download": False,
         "download.directory_upgrade": True,
         "safebrowsing.enabled": True,
