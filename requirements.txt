@@ -1,0 +1,17 @@
+selenium
+easyocr
+opencv-python-headless
+numpy
+pyotp
+python-dotenv
+pandas
+xlrd
+openpyxl
+lxml
+html5lib
+gspread
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+requests
