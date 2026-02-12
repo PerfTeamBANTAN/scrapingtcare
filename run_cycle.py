@@ -74,29 +74,33 @@ def main():
                 driver, login_func=login_otomatis, first_cycle=first_cycle
             )
 
-        # 2. HSI24 → WECARE HSI
-        download_report_hsi(driver)
-        subprocess.run("python import_telkomcare_download.py", shell=True, check=False)
+        try:
+            # 2. HSI24 → WECARE HSI
+            download_report_hsi(driver)
+            subprocess.run("python import_telkomcare_download.py", shell=True, check=False)
 
-        # 2b. HSI24 GAUL → WECARE GAUL
-        download_wecare_gaul(driver)
-        subprocess.run("python import_telkomcare_wecare_gaul.py", shell=True, check=False)
+            # 2b. HSI24 GAUL → WECARE GAUL
+            download_wecare_gaul(driver)
+            subprocess.run("python import_telkomcare_wecare_gaul.py", shell=True, check=False)
 
-        # 3. DATIN24 → WECARE DATIN
-        download_report_datin(driver)
-        subprocess.run("python import_telkomcare_wecare_datin.py", shell=True, check=False)
+            # 3. DATIN24 → WECARE DATIN
+            download_report_datin(driver)
+            subprocess.run("python import_telkomcare_wecare_datin.py", shell=True, check=False)
 
-        # 4. TTR DATIN
-        download_ttr_datin(driver)
-        subprocess.run("python import_telkomcare_ttr_datin.py", shell=True, check=False)
+            # 4. TTR DATIN
+            download_ttr_datin(driver)
+            subprocess.run("python import_telkomcare_ttr_datin.py", shell=True, check=False)
 
-        # 5. TTR INDIBIZ
-        download_ttr_indibiz(driver)
-        subprocess.run("python import_telkomcare_ttr_indibiz.py", shell=True, check=False)
+            # 5. TTR INDIBIZ
+            download_ttr_indibiz(driver)
+            subprocess.run("python import_telkomcare_ttr_indibiz.py", shell=True, check=False)
 
-        # 6. TTR RESELLER
-        download_ttr_reseller(driver)
-        subprocess.run("python import_telkomcare_ttr_reseller.py", shell=True, check=False)
+            # 6. TTR RESELLER
+            download_ttr_reseller(driver)
+            subprocess.run("python import_telkomcare_ttr_reseller.py", shell=True, check=False)
+
+        except Exception as e:
+            print(f"❌ Error saat proses download/import: {e}")
 
     finally:
         print("🧹 Menutup browser Selenium...")
