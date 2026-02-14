@@ -2,7 +2,7 @@ name: Telkomcare Automation
 
 on:
   schedule:
-    - cron: "*/15 * * * *"   # jalan tiap 15 menit (UTC)
+    - cron: "*/60 * * * *"   # jalan tiap 60 menit (UTC)
   workflow_dispatch:          # bisa dijalankan manual dari tab Actions
 
 jobs:
